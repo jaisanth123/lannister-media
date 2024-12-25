@@ -8,44 +8,41 @@ const useAxiosFetch = (dataURL) => {
   const [data, setdata] = useState([]);
 
   useEffect(() => {
-    let isMounted = true; //! Flag to check if the component is still mounted
-    const source = axios.CancelToken.source(); //! Create a cancel token
+    let isMounted = true; 
+    const source = axios.CancelToken.source(); 
 
     const fetchData = async (URL) => {
-      setisLoading(true); //! Indicate that loading has started
+      setisLoading(true);
       try {
         const response = await axios.get(URL, {
-          cancelToken: source.token, //! Pass the cancel token to the request
-          //! if any irrevelent action done the get will be cancelled like unmounting the component while fetching et..
+          cancelToken: source.token, 
         });
         if (isMounted) {
-          setdata(response.data); //! Update data if the component is still mounted
-          setfetchError(null); //! Clear any previous errors
+          setdata(response.data);
+          setfetchError(null); 
         }
       } catch (error) {
         if (isMounted) {
-          setdata([]); //! Reset data if there's an error
-          setfetchError(error.message); //! Set the error message
+          setdata([]);
+          setfetchError(error.message); 
         }
       } finally {
         if (isMounted) {
-          setisLoading(false); //! Indicate that loading has ended
+          setisLoading(false); 
         }
       }
     };
 
-    fetchData(dataURL); //! Fetch data
-
-    //! Cleanup function to run when the effect is re-executed or the component unmounts
+    fetchData(dataURL);
     const cleanup = () => {
-      isMounted = false; //! Prevent state updates
-      source.cancel(); //! Cancel any ongoing Axios request
+      isMounted = false; 
+      source.cancel(); 
     };
 
-    return cleanup; //! Return the cleanup function
-  }, [dataURL]); //! Effect re-runs when `dataURL` changes
+    return cleanup; 
+  }, [dataURL]); 
 
-  return { data, fetchError, isLoading }; //! Return the data, error, and loading state
+  return { data, fetchError, isLoading }; 
 };
 
 export default useAxiosFetch;
